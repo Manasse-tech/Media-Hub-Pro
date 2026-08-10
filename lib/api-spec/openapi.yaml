@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: media
+    description: Playback history and account sync
 paths:
   /healthz:
     get:
@@ -24,6 +26,70 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /history:
+    get:
+      operationId: getHistory
+      tags: [media]
+      summary: Get recently played media
+      responses:
+        "200":
+          description: Recently played media
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HistoryItem"
+    post:
+      operationId: addHistory
+      tags: [media]
+      summary: Add a recently played item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HistoryItemInput"
+      responses:
+        "201":
+          description: History item saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HistoryItem"
+  /sync:
+    get:
+      operationId: getSyncState
+      tags: [media]
+      summary: Get the signed-in user's media state
+      responses:
+        "200":
+          description: User media state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncState"
+        "401":
+          description: Authentication required
+    put:
+      operationId: putSyncState
+      tags: [media]
+      summary: Replace the signed-in user's media state
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SyncState"
+      responses:
+        "200":
+          description: Saved user media state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncState"
+        "401":
+          description: Authentication required
 components:
   schemas:
     HealthStatus:
@@ -33,4 +99,65 @@ components:
           type: string
       required:
         - status
+    HistoryItem:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        artist:
+          type: string
+        type:
+          type: string
+          enum: [audio, video]
+        uri:
+          type: string
+        artwork:
+          type: string
+        playedAt:
+          type: string
+          format: date-time
+      required: [id, title, artist, type, uri, playedAt]
+    HistoryItemInput:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        artist:
+          type: string
+        type:
+          type: string
+          enum: [audio, video]
+        uri:
+          type: string
+        artwork:
+          type: string
+      required: [id, title, artist, type, uri]
+    Playlist:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        itemIds:
+          type: array
+          items:
+            type: string
+      required: [id, name, itemIds]
+    SyncState:
+      type: object
+      properties:
+        favorites:
+          type: array
+          items:
+            type: string
+        playlists:
+          type: array
+          items:
+            $ref: "#/components/schemas/Playlist"
+      required: [favorites, playlists]
 

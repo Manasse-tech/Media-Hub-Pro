@@ -1,0 +1,2 @@
+- [Expo Clerk rendering](expo-clerk-rendering.md) — keep the app tree renderable while Clerk initializes; gate authenticated requests, not the whole UI.
+- [Scoped workspace installs](scoped-workspace-installs.md) — target package dependencies with pnpm filters in the monorepo instead of installing at the workspace root.

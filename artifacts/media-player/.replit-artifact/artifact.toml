@@ -1,0 +1,24 @@
+kind = "mobile"
+previewPath = "/"
+title = "Media Player"
+description = "Une application mobile performante pour lire musique et vidéos locales ou en ligne, importer des fichiers, retrouver ses lectures récentes, gérer paroles et descriptions, et synchroniser playlists et favoris entre appareils."
+version = "1.0.0"
+id = "artifacts/media-player"
+router = "expo-domain"
+
+[[services]]
+name = "expo"
+ensurePreviewReachable = "/status"
+paths = [ "/" ]
+localPort = 21325
+
+[services.development]
+run = "pnpm --filter @workspace/media-player run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/media-player", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/media-player", "run", "serve" ]
+
+[services.env]
+PORT = "21325"
+BASE_PATH = "/"
