@@ -5,14 +5,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 import { useMedia } from '@/context/MediaContext';
 import { MediaCard } from '@/components/MediaCard';
-import { FullPlayer } from '@/components/FullPlayer';
 
 export default function SearchScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { library, setCurrent, favorites, toggleFavorite } = useMedia();
+  const { library, openPlayer, favorites, toggleFavorite } = useMedia();
   const [query, setQuery] = useState('');
-  const [playerVisible, setPlayerVisible] = useState(false);
   const results = useMemo(() => query.trim() ? library.filter((item) => `${item.title} ${item.artist}`.toLowerCase().includes(query.toLowerCase())) : library, [library, query]);
 
   return (
@@ -38,7 +36,7 @@ export default function SearchScreen() {
           <Text style={[styles.resultMeta, { color: colors.mutedForeground }]}>Sources autorisées uniquement</Text>
         </View>
         {results.length ? results.map((item) => (
-          <MediaCard key={item.id} item={item} compact onPress={() => { setCurrent(item); setPlayerVisible(true); }} onFavorite={() => toggleFavorite(item.id)} favorite={favorites.includes(item.id)} />
+          <MediaCard key={item.id} item={item} compact onPress={() => openPlayer(item)} onFavorite={() => toggleFavorite(item.id)} favorite={favorites.includes(item.id)} />
         )) : (
           <View style={[styles.empty, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <Feather name="search" size={22} color={colors.primary} />
@@ -51,7 +49,6 @@ export default function SearchScreen() {
           <Text style={[styles.noticeText, { color: colors.mutedForeground }]}>Les sources externes seront ajoutées uniquement via des intégrations officielles et conformes à leurs conditions.</Text>
         </View>
       </ScrollView>
-      <FullPlayer visible={playerVisible} onClose={() => setPlayerVisible(false)} />
     </View>
   );
 }

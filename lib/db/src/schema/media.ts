@@ -1,4 +1,4 @@
-import { jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { index, jsonb, pgTable, primaryKey, text, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -24,7 +24,10 @@ export const historyTable = pgTable("media_history", {
   uri: text("uri").notNull(),
   artwork: text("artwork"),
   playedAt: timestamp("played_at", { withTimezone: true }).notNull().defaultNow(),
-});
+}, (table) => ({
+  primaryKey: primaryKey({ columns: [table.userId, table.itemId] }),
+  userPlayedAtIndex: index("media_history_user_played_at_idx").on(table.userId, table.playedAt),
+}));
 
 export const insertMediaStateSchema = createInsertSchema(mediaStateTable).omit({
   updatedAt: true,

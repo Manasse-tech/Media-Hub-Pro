@@ -9,8 +9,6 @@ import { useAuth, useUser } from '@clerk/expo';
 import { useColors } from '@/hooks/useColors';
 import { useMedia } from '@/context/MediaContext';
 import { MediaCard } from '@/components/MediaCard';
-import { NowPlayingBar } from '@/components/NowPlayingBar';
-import { FullPlayer } from '@/components/FullPlayer';
 
 export default function HomeScreen() {
   const colors = useColors();
@@ -18,8 +16,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const { isSignedIn } = useAuth();
   const { user } = useUser();
-  const { library, history, favorites, setCurrent, toggleFavorite } = useMedia();
-  const [playerVisible, setPlayerVisible] = useState(false);
+  const { library, history, favorites, openPlayer, toggleFavorite } = useMedia();
   const [showAccount, setShowAccount] = useState(false);
   const featured = library[2] ?? library[0];
   const audio = useMemo(() => library.filter((item) => item.type === 'audio'), [library]);
@@ -40,9 +37,9 @@ export default function HomeScreen() {
           <View style={[styles.accountPanel, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <Text style={[styles.accountTitle, { color: colors.foreground }]}>{isSignedIn ? user?.primaryEmailAddress?.emailAddress ?? 'Compte connecté' : 'Mode invité'}</Text>
             <Text style={[styles.accountText, { color: colors.mutedForeground }]}>{isSignedIn ? 'Vos playlists et favoris sont synchronisés.' : 'La lecture locale reste disponible sans compte.'}</Text>
-            <Pressable onPress={() => router.push('/(auth)/sign-in')} style={styles.accountAction}>
-              <Feather name={isSignedIn ? 'refresh-cw' : 'log-in'} size={15} color={colors.primary} />
-              <Text style={[styles.accountActionText, { color: colors.primary }]}>{isSignedIn ? 'Gérer le compte' : 'Se connecter pour synchroniser'}</Text>
+             <Pressable onPress={() => router.push(isSignedIn ? '/settings' : '/(auth)/sign-in')} style={styles.accountAction}>
+               <Feather name={isSignedIn ? 'settings' : 'log-in'} size={15} color={colors.primary} />
+               <Text style={[styles.accountActionText, { color: colors.primary }]}>{isSignedIn ? 'Gérer le compte' : 'Se connecter pour synchroniser'}</Text>
             </Pressable>
           </View>
         ) : null}
@@ -53,7 +50,7 @@ export default function HomeScreen() {
             <Text style={styles.heroEyebrow}>À LA UNE · {featured?.type === 'video' ? 'FILM' : 'AUDIO'}</Text>
             <Text style={styles.heroTitle}>{featured?.title ?? 'Votre prochaine écoute'}</Text>
             <Text style={styles.heroArtist}>{featured?.artist ?? 'Sélection Media Player'}</Text>
-            <Pressable testID="featured-play" onPress={() => { if (featured) setCurrent(featured); setPlayerVisible(true); }} style={[styles.heroButton, { backgroundColor: colors.primary }]}>
+            <Pressable testID="featured-play" onPress={() => featured && openPlayer(featured)} style={[styles.heroButton, { backgroundColor: colors.primary }]}>
               <Feather name="play" size={15} color={colors.primaryForeground} />
               <Text style={[styles.heroButtonText, { color: colors.primaryForeground }]}>Lire maintenant</Text>
             </Pressable>
@@ -62,7 +59,7 @@ export default function HomeScreen() {
         <SectionHeader title="Repris récemment" colors={colors} />
         {history.length ? (
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
-            {history.map((item) => <MediaCard key={item.id} item={item} onPress={() => { setCurrent(item); setPlayerVisible(true); }} />)}
+            {history.map((item) => <MediaCard key={item.id} item={item} onPress={() => openPlayer(item)} />)}
           </ScrollView>
         ) : (
           <View style={[styles.empty, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -75,17 +72,15 @@ export default function HomeScreen() {
         )}
         <SectionHeader title="Pour vous" colors={colors} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
-          {audio.map((item) => <MediaCard key={item.id} item={item} onPress={() => { setCurrent(item); setPlayerVisible(true); }} onFavorite={() => toggleFavorite(item.id)} favorite={favorites.includes(item.id)} />)}
+          {audio.map((item) => <MediaCard key={item.id} item={item} onPress={() => openPlayer(item)} onFavorite={() => toggleFavorite(item.id)} favorite={favorites.includes(item.id)} />)}
         </ScrollView>
         <SectionHeader title="Votre espace" colors={colors} />
         <View style={styles.quickRow}>
           <QuickAction icon="download-cloud" label="Importer" colors={colors} onPress={() => router.push('/library')} />
-          <QuickAction icon="heart" label={`${favorites.length} favoris`} colors={colors} onPress={() => router.push('/library')} />
+           <QuickAction icon="heart" label={`${favorites.length} favoris`} colors={colors} onPress={() => router.push('/favorites')} />
           <QuickAction icon="list" label="Playlists" colors={colors} onPress={() => router.push('/playlists')} />
         </View>
       </ScrollView>
-      <NowPlayingBar onOpen={() => setPlayerVisible(true)} />
-      <FullPlayer visible={playerVisible} onClose={() => setPlayerVisible(false)} />
     </View>
   );
 }

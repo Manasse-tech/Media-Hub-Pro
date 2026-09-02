@@ -1,0 +1,13 @@
+import { Feather } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useColors } from '@/hooks/useColors';
+
+export default function NotificationSettingsScreen() {
+  const colors = useColors(); const router = useRouter(); const insets = useSafeAreaInsets(); const [enabled, setEnabled] = useState(true);
+  return <View style={[styles.container, { backgroundColor: colors.background }]}><ScrollView contentContainerStyle={{ padding: 20, paddingTop: insets.top + 12 }}><Pressable onPress={() => router.back()} style={styles.back}><Feather name="arrow-left" size={20} color={colors.foreground} /><Text style={[styles.backText, { color: colors.foreground }]}>Paramètres</Text></Pressable><Text style={[styles.kicker, { color: colors.primary }]}>LECTEUR</Text><Text style={[styles.title, { color: colors.foreground }]}>Notifications</Text><View style={[styles.option, { backgroundColor: colors.card, borderColor: colors.border }]}><View style={[styles.icon, { backgroundColor: colors.secondary }]}><Feather name="bell" size={18} color={colors.primary} /></View><View style={{ flex: 1 }}><Text style={[styles.optionTitle, { color: colors.foreground }]}>Notifications de lecture</Text><Text style={[styles.detail, { color: colors.mutedForeground }]}>Afficher les informations du lecteur système</Text></View><Switch value={enabled} onValueChange={setEnabled} trackColor={{ false: colors.secondary, true: colors.primary }} thumbColor={colors.foreground} /></View></ScrollView></View>;
+}
+
+const styles = StyleSheet.create({ container: { flex: 1 }, back: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 28 }, backText: { fontSize: 13, fontFamily: 'Inter_500Medium' }, kicker: { fontSize: 11, letterSpacing: 1.8, fontFamily: 'Inter_700Bold' }, title: { fontSize: 29, marginTop: 7 }, option: { minHeight: 78, borderWidth: 1, borderRadius: 18, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 24 }, icon: { width: 36, height: 36, borderRadius: 11, alignItems: 'center', justifyContent: 'center' }, optionTitle: { fontSize: 14, fontFamily: 'Inter_600SemiBold' }, detail: { fontSize: 12, lineHeight: 17, marginTop: 3, fontFamily: 'Inter_400Regular' } });

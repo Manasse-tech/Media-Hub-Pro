@@ -2,18 +2,18 @@ import * as DocumentPicker from 'expo-document-picker';
 import { Feather } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 import { useMedia, type LocalMedia } from '@/context/MediaContext';
 import { MediaCard } from '@/components/MediaCard';
-import { FullPlayer } from '@/components/FullPlayer';
 
 export default function LibraryScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { library, favorites, addToLibrary, removeFromLibrary, setCurrent, toggleFavorite } = useMedia();
+  const router = useRouter();
+  const { library, favorites, addManyToLibrary, openPlayer, toggleFavorite } = useMedia();
   const [filter, setFilter] = useState<'all' | 'audio' | 'video' | 'favorites'>('all');
-  const [playerVisible, setPlayerVisible] = useState(false);
   const visibleItems = useMemo(() => library.filter((item) => filter === 'all' || filter === item.type || (filter === 'favorites' && favorites.includes(item.id))), [library, filter, favorites]);
 
   const importMedia = async () => {
@@ -23,9 +23,9 @@ export default function LibraryScreen() {
       copyToCacheDirectory: true,
     });
     if (result.canceled) return;
-    result.assets.forEach((asset) => {
+    addManyToLibrary(result.assets.map((asset) => {
       const isVideo = asset.mimeType?.startsWith('video/') || /\.(mp4|mov|mkv|webm)$/i.test(asset.name);
-      const item: LocalMedia = {
+      return {
         id: `local-${asset.uri}`,
         title: asset.name.replace(/\.[^/.]+$/, ''),
         artist: 'Fichier local',
@@ -33,9 +33,10 @@ export default function LibraryScreen() {
         uri: asset.uri,
         description: `Importé depuis votre appareil · ${asset.name}`,
         isOnline: false,
-      };
-      addToLibrary(item);
-    });
+          size: asset.size,
+        addedAt: new Date().toISOString(),
+      } satisfies LocalMedia;
+    }));
   };
 
   return (
@@ -64,9 +65,10 @@ export default function LibraryScreen() {
             key={item.id}
             item={item}
             compact
-            onPress={() => { setCurrent(item); setPlayerVisible(true); }}
+            onPress={() => openPlayer(item)}
             onFavorite={() => toggleFavorite(item.id)}
             favorite={favorites.includes(item.id)}
+            onDetails={() => router.push(`/media/${item.id}`)}
           />
         )) : (
           <View style={[styles.empty, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -81,7 +83,6 @@ export default function LibraryScreen() {
           </Pressable>
         ) : null}
       </ScrollView>
-      <FullPlayer visible={playerVisible} onClose={() => setPlayerVisible(false)} />
     </View>
   );
 }

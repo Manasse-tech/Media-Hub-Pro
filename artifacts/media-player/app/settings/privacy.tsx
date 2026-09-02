@@ -1,0 +1,13 @@
+import { Feather } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useColors } from '@/hooks/useColors';
+
+export default function PrivacySettingsScreen() {
+  const colors = useColors(); const router = useRouter(); const insets = useSafeAreaInsets();
+  return <View style={[styles.container, { backgroundColor: colors.background }]}><ScrollView contentContainerStyle={{ padding: 20, paddingTop: insets.top + 12 }}><Pressable onPress={() => router.back()} style={styles.back}><Feather name="arrow-left" size={20} color={colors.foreground} /><Text style={[styles.backText, { color: colors.foreground }]}>Paramètres</Text></Pressable><Text style={[styles.kicker, { color: colors.primary }]}>CONFIDENTIALITÉ</Text><Text style={[styles.title, { color: colors.foreground }]}>Vos données</Text><View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}><Feather name="shield" size={27} color={colors.primary} /><Text style={[styles.cardTitle, { color: colors.foreground }]}>Contrôle local</Text><Text style={[styles.body, { color: colors.mutedForeground }]}>Les fichiers importés, leurs URI et les métadonnées locales restent sur l’appareil. Les favoris, playlists et l’historique peuvent être synchronisés uniquement après connexion.</Text></View><View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}><Feather name="check-circle" size={27} color={colors.primary} /><Text style={[styles.cardTitle, { color: colors.foreground }]}>Sources conformes</Text><Text style={[styles.body, { color: colors.mutedForeground }]}>L’application ne contourne pas les protections de contenus. Les sources en ligne doivent être officielles et autoriser la lecture utilisée.</Text></View></ScrollView></View>;
+}
+
+const styles = StyleSheet.create({ container: { flex: 1 }, back: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 28 }, backText: { fontSize: 13, fontFamily: 'Inter_500Medium' }, kicker: { fontSize: 11, letterSpacing: 1.8, fontFamily: 'Inter_700Bold' }, title: { fontSize: 29, marginTop: 7 }, card: { borderWidth: 1, borderRadius: 20, padding: 22, marginTop: 20 }, cardTitle: { fontSize: 16, marginTop: 13, fontFamily: 'Inter_600SemiBold' }, body: { fontSize: 13, lineHeight: 21, marginTop: 8, fontFamily: 'Inter_400Regular' } });

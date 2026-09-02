@@ -2,18 +2,19 @@ import { Feather } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
 import { useMedia } from '@/context/MediaContext';
 import { MediaCard } from '@/components/MediaCard';
-import { FullPlayer } from '@/components/FullPlayer';
 
 export default function PlaylistsScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { playlists, library, createPlaylist, setCurrent } = useMedia();
+  const router = useRouter();
+  const { playlists, library, createPlaylist, openPlayer, addToPlaylist, removeFromPlaylist, deletePlaylist } = useMedia();
   const [modalVisible, setModalVisible] = useState(false);
   const [name, setName] = useState('');
-  const [playerVisible, setPlayerVisible] = useState(false);
+  const [selectedPlaylist, setSelectedPlaylist] = useState<string | null>(null);
 
   const save = () => {
     createPlaylist(name);
@@ -35,14 +36,14 @@ export default function PlaylistsScreen() {
         </View>
         <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>Vos sélections, accessibles même sans réseau.</Text>
         {playlists.length ? playlists.map((playlist) => (
-          <View key={playlist.id} style={[styles.playlist, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Pressable key={playlist.id} onPress={() => { setSelectedPlaylist(selectedPlaylist === playlist.id ? null : playlist.id); router.push(`/playlists/${playlist.id}`); }} style={[styles.playlist, { backgroundColor: colors.card, borderColor: selectedPlaylist === playlist.id ? colors.primary : colors.border }]}>
             <View style={[styles.playlistArt, { backgroundColor: colors.secondary }]}><Feather name="music" size={22} color={colors.primary} /></View>
             <View style={styles.playlistCopy}>
               <Text style={[styles.playlistName, { color: colors.foreground }]}>{playlist.name}</Text>
               <Text style={[styles.playlistMeta, { color: colors.mutedForeground }]}>{playlist.itemIds.length} média{playlist.itemIds.length > 1 ? 's' : ''}</Text>
             </View>
             <Feather name="chevron-right" size={18} color={colors.mutedForeground} />
-          </View>
+          </Pressable>
         )) : (
           <View style={[styles.empty, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <Feather name="list" size={23} color={colors.primary} />
@@ -51,8 +52,29 @@ export default function PlaylistsScreen() {
             <Pressable onPress={() => setModalVisible(true)} style={[styles.emptyButton, { backgroundColor: colors.primary }]}><Text style={[styles.emptyButtonText, { color: colors.primaryForeground }]}>Nouvelle playlist</Text></Pressable>
           </View>
         )}
+        {selectedPlaylist ? (
+          <View style={[styles.managePanel, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={styles.manageHeader}>
+              <Text style={[styles.section, { color: colors.foreground, marginTop: 0, marginBottom: 0 }]}>Contenu de la playlist</Text>
+              <Pressable onPress={() => { deletePlaylist(selectedPlaylist); setSelectedPlaylist(null); }} hitSlop={10}><Feather name="trash-2" size={17} color={colors.destructive} /></Pressable>
+            </View>
+            {library.map((item) => {
+              const playlist = playlists.find((entry) => entry.id === selectedPlaylist);
+              const included = Boolean(playlist?.itemIds.includes(item.id));
+              return (
+                <Pressable key={item.id} onPress={() => included ? removeFromPlaylist(selectedPlaylist, item.id) : addToPlaylist(selectedPlaylist, item.id)} style={styles.addRow}>
+                  <View style={[styles.checkbox, { borderColor: included ? colors.primary : colors.border, backgroundColor: included ? colors.primary : 'transparent' }]}>
+                    {included ? <Feather name="check" size={13} color={colors.primaryForeground} /> : null}
+                  </View>
+                  <Text numberOfLines={1} style={[styles.addRowText, { color: colors.foreground }]}>{item.title}</Text>
+                  <Text style={[styles.addRowMeta, { color: colors.mutedForeground }]}>{item.type === 'video' ? 'Vidéo' : 'Audio'}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        ) : null}
         <Text style={[styles.section, { color: colors.foreground }]}>Ajouter depuis la bibliothèque</Text>
-        {library.slice(0, 3).map((item) => <MediaCard key={item.id} item={item} compact onPress={() => { setCurrent(item); setPlayerVisible(true); }} />)}
+        {library.slice(0, 3).map((item) => <MediaCard key={item.id} item={item} compact onPress={() => openPlayer(item)} />)}
       </ScrollView>
       <Modal visible={modalVisible} animationType="fade" transparent onRequestClose={() => setModalVisible(false)}>
         <View style={styles.overlay}><View style={[styles.dialog, { backgroundColor: colors.card }]}>
@@ -61,7 +83,6 @@ export default function PlaylistsScreen() {
           <Pressable onPress={save} disabled={!name.trim()} style={[styles.save, { backgroundColor: colors.primary, opacity: name.trim() ? 1 : 0.45 }]}><Text style={[styles.emptyButtonText, { color: colors.primaryForeground }]}>Créer</Text></Pressable>
         </View></View>
       </Modal>
-      <FullPlayer visible={playerVisible} onClose={() => setPlayerVisible(false)} />
     </View>
   );
 }
@@ -90,4 +111,10 @@ const styles = StyleSheet.create({
   dialogTitle: { fontSize: 18, fontFamily: 'Inter_700Bold' },
   dialogInput: { height: 52, borderWidth: 1, borderRadius: 14, paddingHorizontal: 14, marginTop: 18, fontSize: 14, fontFamily: 'Inter_400Regular' },
   save: { height: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center', marginTop: 14 },
+  managePanel: { borderWidth: 1, borderRadius: 18, padding: 14, marginBottom: 5 },
+  manageHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  addRow: { minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 10, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.06)' },
+  checkbox: { width: 22, height: 22, borderRadius: 7, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  addRowText: { flex: 1, fontSize: 13, fontFamily: 'Inter_500Medium' },
+  addRowMeta: { fontSize: 11, fontFamily: 'Inter_400Regular' },
 });

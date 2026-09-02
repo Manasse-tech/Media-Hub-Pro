@@ -9,12 +9,16 @@ export function MediaCard({
   item,
   onPress,
   onFavorite,
+  onRemove,
+  onDetails,
   favorite,
   compact = false,
 }: {
   item: LocalMedia;
   onPress: () => void;
   onFavorite?: () => void;
+  onRemove?: () => void;
+  onDetails?: () => void;
   favorite?: boolean;
   compact?: boolean;
 }) {
@@ -38,6 +42,16 @@ export function MediaCard({
       {onFavorite ? (
         <Pressable testID={`favorite-${item.id}`} onPress={onFavorite} hitSlop={10} style={styles.favorite}>
           <Feather name={favorite ? 'heart' : 'heart'} size={17} color={favorite ? colors.accent : colors.mutedForeground} />
+        </Pressable>
+      ) : null}
+      {onRemove ? (
+        <Pressable onPress={onRemove} hitSlop={10} style={styles.favorite} accessibilityLabel="Retirer de la playlist" accessibilityRole="button">
+          <Feather name="x" size={17} color={colors.mutedForeground} />
+        </Pressable>
+      ) : null}
+      {onDetails ? (
+        <Pressable onPress={(event) => { event.stopPropagation(); onDetails(); }} hitSlop={10} style={styles.favorite} accessibilityLabel="Voir les détails" accessibilityRole="button">
+          <Feather name="info" size={17} color={colors.mutedForeground} />
         </Pressable>
       ) : null}
     </Pressable>

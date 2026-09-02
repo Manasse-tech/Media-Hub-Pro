@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { View } from 'react-native';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import {
   Inter_400Regular,
@@ -17,6 +18,7 @@ import { ClerkProvider, useAuth } from '@clerk/expo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setAuthTokenGetter, setBaseUrl } from '@workspace/api-client-react';
 import { MediaProvider } from '@/context/MediaContext';
+import { GlobalMediaOverlay } from '@/components/GlobalMediaOverlay';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -40,12 +42,43 @@ function AuthTokenBridge() {
   return null;
 }
 
-function RootLayoutNav() {
+function AppShell({ authenticated }: { authenticated: boolean }) {
   return (
-    <Stack screenOptions={{ headerBackTitle: 'Back' }}>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-    </Stack>
+    <MediaProvider isSignedIn={authenticated}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <KeyboardProvider>
+          <View style={{ flex: 1 }}>
+            <Stack screenOptions={{ headerBackTitle: 'Back' }}>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="settings" options={{ headerShown: false }} />
+              <Stack.Screen name="settings/account" options={{ headerShown: false }} />
+              <Stack.Screen name="settings/sync" options={{ headerShown: false }} />
+              <Stack.Screen name="settings/storage" options={{ headerShown: false }} />
+              <Stack.Screen name="settings/playback" options={{ headerShown: false }} />
+              <Stack.Screen name="settings/notifications" options={{ headerShown: false }} />
+              <Stack.Screen name="settings/privacy" options={{ headerShown: false }} />
+              <Stack.Screen name="favorites" options={{ headerShown: false }} />
+              <Stack.Screen name="history" options={{ headerShown: false }} />
+              <Stack.Screen name="queue" options={{ headerShown: false }} />
+              <Stack.Screen name="media/[id]" options={{ headerShown: false }} />
+              <Stack.Screen name="playlists/[id]" options={{ headerShown: false }} />
+            </Stack>
+            <GlobalMediaOverlay />
+          </View>
+        </KeyboardProvider>
+      </GestureHandlerRootView>
+    </MediaProvider>
+  );
+}
+
+function AuthenticatedApp() {
+  const { isSignedIn } = useAuth();
+  return (
+    <>
+      <AuthTokenBridge />
+      <AppShell authenticated={Boolean(isSignedIn)} />
+    </>
   );
 }
 
@@ -70,14 +103,7 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
-          <AuthTokenBridge />
-          <MediaProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <KeyboardProvider>
-                <RootLayoutNav />
-              </KeyboardProvider>
-            </GestureHandlerRootView>
-          </MediaProvider>
+          {publishableKey ? <AuthenticatedApp /> : <AppShell authenticated={false} />}
         </QueryClientProvider>
       </ErrorBoundary>
     </SafeAreaProvider>

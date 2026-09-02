@@ -104,17 +104,26 @@ components:
       properties:
         id:
           type: string
+          minLength: 1
+          maxLength: 200
         title:
           type: string
+          minLength: 1
+          maxLength: 200
         artist:
           type: string
+          minLength: 1
+          maxLength: 200
         type:
           type: string
           enum: [audio, video]
         uri:
           type: string
+          minLength: 1
+          maxLength: 4096
         artwork:
           type: string
+          maxLength: 4096
         playedAt:
           type: string
           format: date-time
@@ -145,18 +154,25 @@ components:
           type: string
         itemIds:
           type: array
+          maxItems: 1000
           items:
             type: string
+            minLength: 1
+            maxLength: 200
       required: [id, name, itemIds]
     SyncState:
       type: object
       properties:
         favorites:
           type: array
+          maxItems: 500
           items:
             type: string
+            minLength: 1
+            maxLength: 200
         playlists:
           type: array
+          maxItems: 100
           items:
             $ref: "#/components/schemas/Playlist"
       required: [favorites, playlists]

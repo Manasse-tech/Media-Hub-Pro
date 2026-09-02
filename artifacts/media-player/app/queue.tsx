@@ -1,0 +1,15 @@
+import { Feather } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { MediaCard } from '@/components/MediaCard';
+import { useColors } from '@/hooks/useColors';
+import { useMedia } from '@/context/MediaContext';
+
+export default function QueueScreen() {
+  const colors = useColors(); const insets = useSafeAreaInsets(); const router = useRouter(); const { queue, queueIndex, openPlayer } = useMedia();
+  return <View style={[styles.container, { backgroundColor: colors.background }]}><ScrollView contentContainerStyle={{ padding: 20, paddingTop: insets.top + 12, paddingBottom: 120 }}><Pressable onPress={() => router.back()} style={styles.back}><Feather name="arrow-left" size={20} color={colors.foreground} /><Text style={[styles.backText, { color: colors.foreground }]}>Retour</Text></Pressable><Text style={[styles.kicker, { color: colors.primary }]}>LECTEUR</Text><Text style={[styles.title, { color: colors.foreground }]}>File de lecture</Text><Text style={[styles.subtitle, { color: colors.mutedForeground }]}>{queue.length} média{queue.length > 1 ? 's' : ''} · {queueIndex + 1} en cours</Text>{queue.length ? queue.map((item, index) => <View key={item.id} style={[styles.item, index === queueIndex && { borderColor: colors.primary }]}><MediaCard item={item} compact onPress={() => openPlayer(item)} /><Text style={[styles.number, { color: index === queueIndex ? colors.primary : colors.mutedForeground }]}>{index + 1}</Text></View>) : <View style={[styles.empty, { backgroundColor: colors.card, borderColor: colors.border }]}><Feather name="list" size={24} color={colors.primary} /><Text style={[styles.emptyTitle, { color: colors.foreground }]}>File vide</Text><Text style={[styles.emptyText, { color: colors.mutedForeground }]}>Lancez une playlist pour construire une file.</Text></View>}</ScrollView></View>;
+}
+
+const styles = StyleSheet.create({ container: { flex: 1 }, back: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 28 }, backText: { fontSize: 13, fontFamily: 'Inter_500Medium' }, kicker: { fontSize: 11, letterSpacing: 1.8, fontFamily: 'Inter_700Bold' }, title: { fontSize: 29, marginTop: 7, fontFamily: 'Inter_700Bold' }, subtitle: { fontSize: 13, marginTop: 7, marginBottom: 20, fontFamily: 'Inter_400Regular' }, item: { borderWidth: 1, borderColor: 'transparent', borderRadius: 15, flexDirection: 'row', alignItems: 'center', marginBottom: 6 }, number: { width: 28, textAlign: 'center', fontSize: 12, fontFamily: 'Inter_700Bold' }, empty: { borderWidth: 1, borderRadius: 20, padding: 25, alignItems: 'center', gap: 9 }, emptyTitle: { fontSize: 15, fontFamily: 'Inter_600SemiBold' }, emptyText: { fontSize: 12, textAlign: 'center', fontFamily: 'Inter_400Regular' } });
