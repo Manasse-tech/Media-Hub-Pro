@@ -10,6 +10,7 @@ import {
 } from '@workspace/api-client-react';
 import type { Playlist, SyncState } from '@workspace/api-client-react';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { deletePersistedMedia } from '@/lib/mediaStorage';
 
 export type LocalMedia = {
   id: string;
@@ -42,6 +43,11 @@ type MediaContextValue = {
   isHydrated: boolean;
   isSyncing: boolean;
   syncError: string | null;
+  playbackPosition: number;
+  playbackDuration: number;
+  playbackVolume: number;
+  playbackMuted: boolean;
+  playbackRate: number;
   setCurrent: (item: LocalMedia | null) => void;
   openPlayer: (item?: LocalMedia) => void;
   playQueue: (items: LocalMedia[]) => void;
@@ -51,6 +57,12 @@ type MediaContextValue = {
   playPrevious: () => void;
   toggleRepeat: () => void;
   toggleShuffle: () => void;
+  seekTo: (seconds: number) => void;
+  setPlaybackSnapshot: (position: number, duration: number) => void;
+  setPlaybackVolume: (volume: number) => void;
+  toggleMute: () => void;
+  setPlaybackRate: (rate: number) => void;
+  registerSeekHandler: (handler: (seconds: number) => void) => () => void;
   addToLibrary: (item: LocalMedia) => void;
   addManyToLibrary: (items: LocalMedia[]) => void;
   toggleFavorite: (id: string) => void;
@@ -149,6 +161,12 @@ export function MediaProvider({
   const [repeatMode, setRepeatMode] = useState<RepeatMode>('off');
   const [isHydrated, setIsHydrated] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
+  const [playbackPosition, setPlaybackPosition] = useState(0);
+  const [playbackDuration, setPlaybackDuration] = useState(0);
+  const [playbackVolume, setPlaybackVolumeState] = useState(1);
+  const [playbackMuted, setPlaybackMuted] = useState(false);
+  const [playbackRate, setPlaybackRateState] = useState(1);
+  const seekHandler = useRef<(seconds: number) => void>(() => undefined);
   const remoteApplied = useRef(false);
   const syncChain = useRef(Promise.resolve());
 
@@ -380,6 +398,7 @@ export function MediaProvider({
   }, [persist]);
 
   const removeFromLibrary = useCallback((id: string) => {
+    const removed = library.find((item) => item.id === id);
     setLibrary((previous) => {
       const next = previous.filter((item) => item.id !== id);
       void persist(LIBRARY_KEY, next);
@@ -400,12 +419,43 @@ export function MediaProvider({
       setIsPlaying(false);
       setPlayerVisible(false);
     }
-  }, [current?.id, persist]);
+    if (removed && !removed.isOnline) {
+      void deletePersistedMedia(removed.uri).catch(() => undefined);
+    }
+  }, [current?.id, library, persist]);
 
   const clearHistory = useCallback(() => {
     setHistory([]);
     void persist(HISTORY_KEY, []);
   }, [persist]);
+
+  const seekTo = useCallback((seconds: number) => {
+    seekHandler.current(Math.max(0, seconds));
+  }, []);
+
+  const setPlaybackSnapshot = useCallback((position: number, duration: number) => {
+    setPlaybackPosition((previous) => Math.abs(previous - position) > 0.25 ? position : previous);
+    setPlaybackDuration((previous) => previous === duration ? previous : duration);
+  }, []);
+
+  const setPlaybackVolume = useCallback((volume: number) => {
+    setPlaybackVolumeState(Math.max(0, Math.min(1, volume)));
+  }, []);
+
+  const toggleMute = useCallback(() => {
+    setPlaybackMuted((muted) => !muted);
+  }, []);
+
+  const setPlaybackRate = useCallback((rate: number) => {
+    setPlaybackRateState(Math.max(0.5, Math.min(2, rate)));
+  }, []);
+
+  const registerSeekHandler = useCallback((handler: (seconds: number) => void) => {
+    seekHandler.current = handler;
+    return () => {
+      if (seekHandler.current === handler) seekHandler.current = () => undefined;
+    };
+  }, []);
 
   const value = useMemo<MediaContextValue>(() => ({
     library,
@@ -421,6 +471,11 @@ export function MediaProvider({
     isHydrated,
     isSyncing: syncMutation.isPending,
     syncError,
+    playbackPosition,
+    playbackDuration,
+    playbackVolume,
+    playbackMuted,
+    playbackRate,
     setCurrent,
     openPlayer,
     playQueue,
@@ -435,6 +490,12 @@ export function MediaProvider({
       setQueue(current ? [current, ...rest] : rest);
       setQueueIndex(0);
     },
+    seekTo,
+    setPlaybackSnapshot,
+    setPlaybackVolume,
+    toggleMute,
+    setPlaybackRate,
+    registerSeekHandler,
     addToLibrary,
     addManyToLibrary,
     toggleFavorite,
@@ -453,9 +514,11 @@ export function MediaProvider({
     },
   }), [
     library, history, favorites, playlists, current, queue, queueIndex, isPlaying, playerVisible,
-    repeatMode, isHydrated, syncMutation.isPending, syncError, setCurrent, openPlayer, playQueue, playNext,
+    repeatMode, isHydrated, syncMutation.isPending, syncError, playbackPosition, playbackDuration,
+    playbackVolume, playbackMuted, playbackRate, setCurrent, openPlayer, playQueue, playNext,
     playPrevious, addToLibrary, addManyToLibrary, toggleFavorite, createPlaylist, renamePlaylist,
     deletePlaylist, addToPlaylist, removeFromPlaylist, movePlaylistItem, removeFromLibrary, clearHistory,
+    seekTo, setPlaybackSnapshot, setPlaybackVolume, toggleMute, setPlaybackRate, registerSeekHandler,
   ]);
 
   return <MediaContext.Provider value={value}>{children}</MediaContext.Provider>;

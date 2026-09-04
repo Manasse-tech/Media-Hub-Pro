@@ -1,12 +1,13 @@
 import * as DocumentPicker from 'expo-document-picker';
 import { Feather } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 import { useMedia, type LocalMedia } from '@/context/MediaContext';
 import { MediaCard } from '@/components/MediaCard';
+import { persistImportedMedia } from '@/lib/mediaStorage';
 
 export default function LibraryScreen() {
   const colors = useColors();
@@ -23,46 +24,60 @@ export default function LibraryScreen() {
       copyToCacheDirectory: true,
     });
     if (result.canceled) return;
-    addManyToLibrary(result.assets.map((asset) => {
-      const isVideo = asset.mimeType?.startsWith('video/') || /\.(mp4|mov|mkv|webm)$/i.test(asset.name);
-      return {
-        id: `local-${asset.uri}`,
-        title: asset.name.replace(/\.[^/.]+$/, ''),
-        artist: 'Fichier local',
-        type: isVideo ? 'video' : 'audio',
-        uri: asset.uri,
-        description: `Importé depuis votre appareil · ${asset.name}`,
-        isOnline: false,
+    try {
+      const imported = await Promise.all(result.assets.map(async (asset, index) => {
+        const isVideo = asset.mimeType?.startsWith('video/') || /\.(mp4|mov|mkv|webm)$/i.test(asset.name);
+        const id = `local-${Date.now()}-${index}`;
+        const uri = await persistImportedMedia(asset.uri, asset.name, id);
+        return {
+          id,
+          title: asset.name.replace(/\.[^/.]+$/, ''),
+          artist: 'Fichier local',
+          type: isVideo ? 'video' : 'audio',
+          uri,
+          description: `Importé depuis votre appareil · ${asset.name}`,
+          isOnline: false,
           size: asset.size,
-        addedAt: new Date().toISOString(),
-      } satisfies LocalMedia;
-    }));
+          addedAt: new Date().toISOString(),
+        } satisfies LocalMedia;
+      }));
+      addManyToLibrary(imported);
+    } catch {
+      Alert.alert('Import impossible', 'Le fichier n’a pas pu être conservé sur cet appareil. Vérifiez l’espace disponible puis réessayez.');
+    }
   };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScrollView contentContainerStyle={{ paddingTop: insets.top + 14, paddingBottom: 128 }} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <View>
-            <Text style={[styles.kicker, { color: colors.primary }]}>VOTRE COLLECTION</Text>
-            <Text style={[styles.title, { color: colors.foreground }]}>Bibliothèque</Text>
-          </View>
-          <Pressable testID="import-media" onPress={importMedia} style={[styles.importButton, { backgroundColor: colors.primary }]}>
-            <Feather name="plus" size={18} color={colors.primaryForeground} />
-            <Text style={[styles.importText, { color: colors.primaryForeground }]}>Importer</Text>
-          </Pressable>
-        </View>
-        <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>{library.length} médias disponibles sur cet appareil</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
-          {(['all', 'audio', 'video', 'favorites'] as const).map((value) => (
-            <Pressable key={value} onPress={() => setFilter(value)} style={[styles.filter, { backgroundColor: filter === value ? colors.primary : colors.card, borderColor: filter === value ? colors.primary : colors.border }]}>
-              <Text style={[styles.filterText, { color: filter === value ? colors.primaryForeground : colors.mutedForeground }]}>{value === 'all' ? 'Tout' : value === 'audio' ? 'Musique' : value === 'video' ? 'Vidéos' : 'Favoris'}</Text>
-            </Pressable>
-          ))}
-        </ScrollView>
-        {visibleItems.length ? visibleItems.map((item) => (
+      <FlatList
+        data={visibleItems}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingTop: insets.top + 14, paddingBottom: 128 }}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={(
+          <>
+            <View style={styles.header}>
+              <View>
+                <Text style={[styles.kicker, { color: colors.primary }]}>VOTRE COLLECTION</Text>
+                <Text style={[styles.title, { color: colors.foreground }]}>Bibliothèque</Text>
+              </View>
+              <Pressable testID="import-media" onPress={importMedia} style={[styles.importButton, { backgroundColor: colors.primary }]}>
+                <Feather name="plus" size={18} color={colors.primaryForeground} />
+                <Text style={[styles.importText, { color: colors.primaryForeground }]}>Importer</Text>
+              </Pressable>
+            </View>
+            <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>{library.length} médias disponibles sur cet appareil</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
+              {(['all', 'audio', 'video', 'favorites'] as const).map((value) => (
+                <Pressable key={value} onPress={() => setFilter(value)} style={[styles.filter, { backgroundColor: filter === value ? colors.primary : colors.card, borderColor: filter === value ? colors.primary : colors.border }]}>
+                  <Text style={[styles.filterText, { color: filter === value ? colors.primaryForeground : colors.mutedForeground }]}>{value === 'all' ? 'Tout' : value === 'audio' ? 'Musique' : value === 'video' ? 'Vidéos' : 'Favoris'}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </>
+        )}
+        renderItem={({ item }) => (
           <MediaCard
-            key={item.id}
             item={item}
             compact
             onPress={() => openPlayer(item)}
@@ -70,19 +85,20 @@ export default function LibraryScreen() {
             favorite={favorites.includes(item.id)}
             onDetails={() => router.push(`/media/${item.id}`)}
           />
-        )) : (
+        )}
+        ListEmptyComponent={(
           <View style={[styles.empty, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <Feather name="folder" size={23} color={colors.primary} />
             <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>Aucun média dans cette vue.</Text>
           </View>
         )}
-        {library.some((item) => item.id.startsWith('local-')) ? (
+        ListFooterComponent={library.some((item) => item.id.startsWith('local-')) ? (
           <Pressable onPress={() => Alert.alert('Fichiers locaux', 'Les fichiers importés restent sur cet appareil et ne sont pas envoyés automatiquement dans le cloud.')} style={styles.info}>
             <Feather name="shield" size={15} color={colors.primary} />
             <Text style={[styles.infoText, { color: colors.mutedForeground }]}>Vos fichiers locaux restent privés sur l’appareil.</Text>
           </Pressable>
         ) : null}
-      </ScrollView>
+      />
     </View>
   );
 }

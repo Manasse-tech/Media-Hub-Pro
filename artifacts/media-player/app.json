@@ -27,10 +27,23 @@
           "origin": "https://replit.com/"
         }
       ],
-      "expo-audio",
-      "expo-video",
+      [
+        "expo-audio",
+        {
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }
+      ],
+      "expo-file-system",
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,
