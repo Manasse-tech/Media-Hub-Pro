@@ -1,0 +1,29 @@
+kind = "video"
+videoAspectRatio = "16:9"
+previewPath = "/media-player-film/"
+title = "Media Player — Film produit"
+description = "Une courte vidéo animée qui présente le lecteur audio et vidéo local : import privé, bibliothèque, lecture et contrôle des médias sur l’appareil."
+version = "1.0.0"
+id = "artifacts/media-player-film"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/media-player-film/" ]
+localPort = 26075
+
+[services.development]
+run = "pnpm --filter @workspace/media-player-film run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/media-player-film", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/media-player-film/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "26075"
+BASE_PATH = "/media-player-film/"
