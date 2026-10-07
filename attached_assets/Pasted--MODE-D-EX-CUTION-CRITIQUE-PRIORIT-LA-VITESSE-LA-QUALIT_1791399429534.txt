@@ -1,0 +1,355 @@
+# MODE D’EXÉCUTION CRITIQUE — PRIORITÉ À LA VITESSE, LA QUALITÉ ET L’ÉCONOMIE DE CRÉDITS
+
+Tu es responsable de la finalisation complète de mon application Android de lecteur audio/vidéo.
+
+OBJECTIF :
+
+Terminer le maximum de travail utile avec le minimum de consommation inutile de crédits, tout en maintenant une qualité élevée.
+
+Tu dois travailler comme une petite équipe d’ingénieurs coordonnée, et non comme plusieurs agents indépendants qui répètent les mêmes analyses.
+
+## RÈGLE PRINCIPALE
+
+N’utilise PAS automatiquement le parallélisme pour tout.
+
+Utilise le parallélisme uniquement lorsque plusieurs tâches sont réellement indépendantes.
+
+Lorsqu’une tâche dépend d’une autre, exécute-les dans le bon ordre.
+
+Exemple :
+
+Audit → migration Expo → validation de la migration → fonctionnalités → optimisation → tests finaux.
+
+Ne fais pas travailler plusieurs agents simultanément sur les mêmes fichiers, les mêmes composants ou la même architecture lorsque cela peut provoquer des conflits ou du travail en double.
+
+## 1. AGENT COORDINATEUR
+
+Commence par créer une vue globale du projet.
+
+Tu es l’agent coordinateur.
+
+Ton rôle :
+
+* comprendre l’architecture existante
+* identifier les dépendances
+* identifier les tâches terminées
+* identifier les tâches incomplètes
+* identifier les tâches abandonnées
+* identifier les bugs
+* identifier les fonctionnalités manquantes
+* déterminer les dépendances entre les tâches
+* déterminer quelles tâches peuvent être exécutées en parallèle
+* empêcher les agents de répéter le même travail.
+
+Avant de modifier le code, construis mentalement un graphe de dépendances.
+
+## 2. UTILISATION INTELLIGENTE DU PARALLÉLISME
+
+Quand plusieurs tâches sont indépendantes, exécute-les en parallèle.
+
+Exemples de tâches pouvant être parallélisées après l’audit et la stabilisation Expo :
+
+BRANCHE A :
+Audio et lecture en arrière-plan
+
+BRANCHE B :
+Vidéo et interface vidéo
+
+BRANCHE C :
+Importation de fichiers audio
+
+BRANCHE D :
+Bibliothèque, recherche, albums, artistes et dossiers
+
+BRANCHE E :
+UI responsive et expérience utilisateur
+
+BRANCHE F :
+Paramètres
+
+BRANCHE G :
+Analyse des performances et nettoyage du code.
+
+Chaque branche doit avoir un périmètre clairement défini.
+
+## 3. UNE SEULE SOURCE DE VÉRITÉ
+
+Tous les agents doivent respecter l’état actuel du projet.
+
+NE fais jamais supposer à un agent que certaines fonctionnalités existent sans vérifier le code.
+
+Avant d’ajouter une fonctionnalité :
+
+* recherche si elle existe déjà
+* réutilise le code existant si possible
+* complète plutôt que reconstruire
+* évite les doublons.
+
+## 4. ÉCONOMIE DE CRÉDITS
+
+Tu dois considérer les crédits comme une ressource limitée.
+
+Réduis les opérations inutiles.
+
+NE :
+
+* relis pas inutilement les mêmes fichiers
+* répète pas plusieurs fois la même analyse
+* ne recrée pas des composants déjà existants
+* ne relance pas inutilement des installations
+* ne fais pas plusieurs audits identiques
+* ne demande pas à plusieurs agents de corriger le même bug
+* ne reconstruis pas toute l’application.
+
+Pour les tâches simples, ciblées ou répétitives, utilise le mode économique / le modèle le moins coûteux approprié.
+
+Pour les tâches complexes qui nécessitent réellement davantage de raisonnement, utilise un mode plus puissant.
+
+Ne consomme pas du niveau maximal de calcul pour une petite modification.
+
+## 5. REGROUPEMENT INTELLIGENT DES MODIFICATIONS
+
+Lorsque plusieurs petites corrections concernent le même domaine, regroupe-les dans une seule tâche cohérente.
+
+Exemple :
+
+Ne fais pas :
+
+* corriger bouton A
+* corriger bouton B
+* corriger bouton C
+* corriger navigation D
+
+Fais plutôt :
+
+« Auditer et corriger l'ensemble de la navigation de la bibliothèque ».
+
+Cela permet de réduire les répétitions et les cycles inutiles.
+
+## 6. NE PAS TESTER 20 FOIS LA MÊME CHOSE
+
+Chaque branche doit effectuer ses propres vérifications ciblées.
+
+Exemple :
+
+Branche Audio :
+tester audio, pause, reprise, file, arrière-plan.
+
+Branche Vidéo :
+tester vidéo, pause, plein écran, contrôles.
+
+Branche Import :
+tester sélection, import, doublons, fichiers invalides.
+
+Ensuite, l’agent coordinateur effectue UN audit d’intégration complet.
+
+Ne demande pas à chaque branche de refaire tous les tests du projet.
+
+## 7. ORDRE DES GRANDES PHASES
+
+### PHASE 0 — INVENTAIRE
+
+Une seule analyse globale du projet.
+
+Identifier :
+
+* architecture
+* packages
+* Expo
+* React Native
+* APIs utilisées
+* tâches historiques
+* TODO
+* bugs
+* fonctionnalités absentes.
+
+### PHASE 1 — STABILISATION EXPO
+
+Cette phase doit être terminée avant les autres modifications majeures.
+
+Analyser :
+
+* Expo SDK
+* React Native
+* Node
+* packages Expo
+* packages incompatibles
+* APIs deprecated.
+
+Migrer vers les versions actuellement supportées.
+
+Corriger les incompatibilités.
+
+Vérifier que l'application démarre.
+
+### PHASE 2 — PARALLÉLISATION
+
+Une fois Expo stabilisé, répartir le travail indépendant en branches.
+
+BRANCHE AUDIO
+BRANCHE VIDÉO
+BRANCHE IMPORT
+BRANCHE BIBLIOTHÈQUE
+BRANCHE UI
+BRANCHE PARAMÈTRES
+BRANCHE PERFORMANCE.
+
+Ne parallélise pas deux tâches qui modifient principalement les mêmes fichiers.
+
+### PHASE 3 — INTÉGRATION
+
+Après les branches :
+
+* intégrer les changements
+* résoudre les conflits
+* supprimer les doublons
+* harmoniser l'architecture
+* vérifier les imports
+* vérifier les types.
+
+### PHASE 4 — OPTIMISATION
+
+Seulement après que les fonctionnalités essentielles fonctionnent.
+
+Optimiser :
+
+* mémoire
+* rendu
+* listes
+* images
+* scan
+* stockage
+* CPU
+* batterie
+* démarrage
+* cache.
+
+Ne pas optimiser prématurément une fonctionnalité qui doit encore être modifiée.
+
+### PHASE 5 — AUDIT FINAL
+
+Un seul audit global.
+
+Rechercher :
+
+* crash
+* bug
+* navigation cassée
+* bouton sans action
+* fichier manquant
+* fonctionnalité incomplète
+* problème Expo
+* problème Android
+* problème audio
+* problème vidéo
+* problème de permissions
+* problème de performance.
+
+Puis corriger les problèmes réellement trouvés.
+
+## 8. PRIORITÉS
+
+Si les crédits commencent à devenir faibles, respecte impérativement cette priorité :
+
+PRIORITÉ 1
+Application qui démarre et fonctionne avec l’Expo actuel.
+
+PRIORITÉ 2
+Lecture audio fiable.
+
+PRIORITÉ 3
+Importation et scan des fichiers audio.
+
+PRIORITÉ 4
+Vidéo fonctionnelle.
+
+PRIORITÉ 5
+Lecture en arrière-plan + notification média.
+
+PRIORITÉ 6
+Bibliothèque / recherche / playlists / favoris.
+
+PRIORITÉ 7
+Permissions et paramètres.
+
+PRIORITÉ 8
+Performance.
+
+PRIORITÉ 9
+Améliorations visuelles.
+
+PRIORITÉ 10
+Fonctionnalités secondaires.
+
+Ne dépense jamais une grande quantité de crédits pour une amélioration visuelle secondaire alors qu'une fonctionnalité essentielle reste cassée.
+
+## 9. AUTONOMIE
+
+Ne m'interromps pas pour demander :
+
+« Quelle tâche dois-je faire maintenant ? »
+
+Utilise le backlog, les dépendances et les priorités définies ici.
+
+Continue automatiquement avec la prochaine tâche pertinente.
+
+Ne crée pas artificiellement une nouvelle tâche pour éviter de terminer une tâche existante.
+
+Une tâche n'est considérée comme terminée que lorsqu'elle est :
+
+* implémentée
+* intégrée
+* vérifiée.
+
+## 10. RAPPORT DE PROGRESSION COMPACT
+
+À chaque point important, produis uniquement :
+
+ÉTAT :
+Terminé / Partiel / Bloqué
+
+FAIT :
+résumé des modifications
+
+RESTE :
+ce qui manque réellement
+
+PROCHAINE ACTION :
+action prioritaire suivante.
+
+Évite les longues explications inutiles qui consomment du contexte.
+
+## 11. RÈGLE ABSOLUE
+
+Le but n'est PAS de maximiser le nombre d'agents.
+
+Le but est de maximiser :
+
+QUALITÉ DU RÉSULTAT / CRÉDITS CONSOMMÉS.
+
+Donc :
+
+* parallélise lorsque cela fait gagner du temps réel
+* séquentialise lorsqu'il existe une dépendance
+* évite les analyses répétitives
+* évite les modifications conflictuelles
+* regroupe les tâches proches
+* utilise les modèles économiques pour les tâches simples
+* utilise les modèles puissants uniquement pour les problèmes complexes
+* garde un seul agent coordinateur pour l'intégration finale.
+
+## 12. RÉSULTAT FINAL
+
+Je veux que tu agisses comme une équipe d'ingénieurs spécialisée Android/React Native/Expo, mais avec une gestion stricte du budget de calcul.
+
+Ne cherche pas simplement à produire beaucoup de code.
+
+Cherche à produire le maximum de fonctionnalités réellement fonctionnelles avec le minimum d'actions inutiles.
+
+Ne déclare jamais une tâche terminée sans vérification.
+
+Ne recommence jamais le projet à zéro sans raison majeure.
+
+Préserve le travail existant lorsqu'il est correct.
+
+Commence maintenant par l'audit global, puis exécute automatiquement le plan selon ces règles.
