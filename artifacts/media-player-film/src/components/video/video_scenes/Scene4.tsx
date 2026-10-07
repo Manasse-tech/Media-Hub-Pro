@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { AudioLines, Pause, Play, SkipBack, SkipForward, Volume2 } from 'lucide-react';
+import { AudioLines, Play, SkipBack, SkipForward, Volume2 } from 'lucide-react';
 import { useSceneTimer } from '@/lib/video';
 import { AccentRing, assetUrl, EASE_OUT, SceneGrain, SceneWord } from '../FilmElements';
 
@@ -24,7 +24,7 @@ export function Scene4() {
   return (
     <motion.section
       className="film-scene"
-      initial={{ opacity: 0, scale: 1.12, clipPath: 'circle(0% at 43% 47%)' }}
+      initial={{ opacity: 1, scale: 1.03, clipPath: 'circle(92% at 43% 47%)' }}
       animate={{ opacity: 1, scale: 1, clipPath: 'circle(130% at 43% 47%)' }}
       exit={{ opacity: 0, scale: 1.04, rotateY: -8, clipPath: 'inset(0 50% 0 50%)' }}
       transition={{ duration: 0.54, ease: EASE_OUT }}
@@ -45,7 +45,7 @@ export function Scene4() {
           position: 'absolute',
           left: '8%',
           top: '16%',
-          width: '54%',
+          width: '51%',
           height: '68%',
           zIndex: 2,
           overflow: 'hidden',
@@ -56,7 +56,7 @@ export function Scene4() {
           transformOrigin: '50% 52%',
           transformStyle: 'preserve-3d',
         }}
-        initial={{ opacity: 0, scale: 0.87, rotateY: -16, rotateX: 4 }}
+        initial={{ opacity: 0.78, scale: 0.92, rotateY: -12, rotateX: 3 }}
         animate={handoff
           ? { opacity: 0.22, scale: 1.58, rotateY: 19, rotateX: -5, x: '-3vw', y: '5vh' }
           : { opacity: 1, scale: 1, rotateY: 0, rotateX: 0 }}
@@ -135,7 +135,7 @@ export function Scene4() {
         />
       </motion.div>
 
-      <div style={{ position: 'absolute', left: '67%', top: '25%', width: '28%', zIndex: 3 }}>
+      <div style={{ position: 'absolute', left: '62%', top: '25%', width: '36%', zIndex: 3 }}>
         <AnimatePresence mode="sync" initial={false}>
           <motion.div
             key={headline}
@@ -144,7 +144,7 @@ export function Scene4() {
             exit={{ opacity: 0, y: -15, scale: 1.04 }}
             transition={{ duration: 0.34, ease: EASE_OUT }}
           >
-            <SceneWord size={headline === 2 ? '10vmin' : '12vmin'}>
+            <SceneWord size={headline === 2 ? '15.5vmin' : '17vmin'}>
               {words[headline]}
             </SceneWord>
           </motion.div>
@@ -188,7 +188,7 @@ export function Scene4() {
           initial={{ opacity: 0, clipPath: 'inset(0 0 0 100%)' }}
           animate={{ opacity: 1, clipPath: 'inset(0 0 0 0)' }}
           transition={{ delay: 3.7, duration: 0.4, ease: EASE_OUT }}
-          style={{ marginTop: '3.4vh', color: 'var(--color-text-secondary)', fontSize: '2.8vmin', lineHeight: 1.18 }}
+          style={{ marginTop: '3.4vh', color: 'var(--color-text-secondary)', fontSize: '3vmin', lineHeight: 1.18 }}
         >
           AVANCEZ À VOTRE RYTHME
         </motion.div>
@@ -198,7 +198,7 @@ export function Scene4() {
           animate={{ opacity: showRate ? 1 : 0, scale: showRate ? 1 : 0.65, rotateX: showRate ? 0 : -45 }}
           transition={{ duration: 0.36, ease: EASE_OUT }}
           className="film-mono"
-          style={{ marginTop: '2vh', display: 'inline-block', padding: '0.65vh 1vw', border: '1px solid rgba(97,231,232,.46)', borderRadius: '999px', color: 'var(--color-primary)', fontSize: '1.8vmin' }}
+          style={{ marginTop: '2vh', display: 'inline-block', padding: '0.65vh 1vw', border: '1px solid rgba(97,231,232,.46)', borderRadius: '999px', color: 'var(--color-primary)', fontSize: '2vmin' }}
         >
           1×
         </motion.div>

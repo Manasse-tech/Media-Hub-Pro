@@ -26,10 +26,12 @@ export function AccentRing({
   size = '22vw',
   color = 'var(--color-primary)',
   width = '0.22vw',
+  animated = true,
 }: {
   size?: string;
   color?: string;
   width?: string;
+  animated?: boolean;
 }) {
   return (
     <motion.div
@@ -43,8 +45,8 @@ export function AccentRing({
         flex: '0 0 auto',
         boxShadow: `inset 0 0 0 1px rgba(255,255,255,.035), 0 0 3vw color-mix(in srgb, ${color} 16%, transparent)`,
       }}
-      animate={{ rotate: [0, 9, 0], scale: [1, 1.035, 1] }}
-      transition={{ duration: 3.4, ease: 'easeInOut', repeat: Infinity }}
+      animate={animated ? { rotate: [0, 9, 0], scale: [1, 1.035, 1] } : undefined}
+      transition={animated ? { duration: 3.4, ease: 'easeInOut', repeat: Infinity } : undefined}
     >
       <span
         style={{

@@ -10,15 +10,15 @@ export function Scene2() {
   const [handoff, setHandoff] = useState(false);
 
   useSceneTimer([
-    { time: 1180, callback: () => setAudioReady(true) },
-    { time: 1990, callback: () => setVideoReady(true) },
+    { time: 1980, callback: () => setAudioReady(true) },
+    { time: 2320, callback: () => setVideoReady(true) },
     { time: 3440, callback: () => setHandoff(true) },
   ]);
 
   return (
     <motion.section
       className="film-scene"
-      initial={{ opacity: 0, clipPath: 'polygon(50% 0, 50% 0, 50% 100%, 50% 100%)' }}
+      initial={{ opacity: 1, clipPath: 'inset(0 0 0 46%)' }}
       animate={{ opacity: 1, clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' }}
       exit={{ opacity: 0, rotateX: 9, scale: 0.96, clipPath: 'inset(0 0 0 100%)' }}
       transition={{ duration: 0.48, ease: EASE_OUT }}
@@ -42,14 +42,14 @@ export function Scene2() {
         <motion.div
           initial={{ opacity: 0, y: 20, scale: 0.94 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.5, ease: EASE_OUT }}
+          transition={{ delay: 0.16, duration: 0.5, ease: EASE_OUT }}
         >
-          <SceneWord size="12vmin">IMPORTER.</SceneWord>
+          <SceneWord size="13.5vmin">IMPORTER.</SceneWord>
         </motion.div>
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55, duration: 0.4, ease: EASE_OUT }}
+          transition={{ delay: 0.96, duration: 0.4, ease: EASE_OUT }}
           style={{ margin: '2.1vh 0 0', color: 'var(--color-text-secondary)', fontSize: '3.25vmin' }}
         >
           Depuis votre appareil.

@@ -1,0 +1,676 @@
+AUDIT COMPLET OBLIGATOIRE AVANT TOUTE MODIFICATION
+
+Commence par analyser l’intégralité du projet disponible dans Replit :
+
+package.json
+app.json / app.config.*
+toutes les dépendances Expo et React Native
+structure complète du projet
+écrans
+composants
+services
+hooks
+navigation
+stockage local
+gestion audio
+gestion vidéo
+gestion des fichiers
+gestion des permissions
+notifications
+configuration Android
+éventuels plugins Expo
+fichiers natifs Android s’ils existent
+README, TODO, commentaires TODO/FIXME
+historiques Git/commits disponibles
+anciennes versions du code présentes dans le projet
+journaux, notes ou historiques de tâches disponibles dans l’environnement Replit
+toute autre trace permettant d’identifier du travail commencé mais non terminé.
+IMPORTANT SUR LES ANCIENNES CONVERSATIONS
+
+Tu ne dois PAS prétendre avoir accès à des conversations externes auxquelles tu n’as réellement pas accès.
+
+Si des exports, notes, fichiers, historiques de tâches ou éléments provenant de mes anciennes conversations sont présents dans le projet, analyse-les.
+
+Pour chaque tâche historique identifiable, classe-la ainsi :
+
+Terminée et vérifiée
+Partiellement terminée
+Commencée mais abandonnée
+Prévue mais jamais commencée
+Bloquée par une erreur ou une limitation technique
+
+Crée ensuite une liste de toutes les tâches restantes et utilise cette liste comme backlog de finalisation.
+
+NE SUPPRIME PAS une ancienne fonctionnalité simplement parce qu’elle semble incomplète. Vérifie d’abord son rôle dans l’architecture existante.
+
+2. PROBLÈME EXPO GO À RÉSOUDRE EN PRIORITÉ
+
+Le projet utilise actuellement une ancienne version d’Expo qui n’est plus compatible correctement avec la version d’Expo Go actuellement installée sur mon téléphone.
+
+Analyse exactement :
+
+la version Expo actuelle du projet
+la version React Native
+la version Node compatible
+les versions de toutes les bibliothèques Expo
+les dépendances incompatibles ou obsolètes
+les packages deprecated
+les API anciennes
+les éventuels imports provenant d’anciennes APIs Expo.
+
+Mets ensuite le projet à niveau vers la version Expo stable actuellement supportée et compatible avec l’Expo Go actuel.
+
+NE CHOISIS PAS une version au hasard.
+
+Utilise la documentation Expo officielle et les commandes recommandées par Expo pour déterminer les versions compatibles.
+
+Effectue la migration proprement et, lorsque nécessaire, progressivement afin d’identifier les régressions.
+
+Utilise :
+
+npx expo install
+les commandes Expo adaptées
+les versions cohérentes des packages Expo
+la configuration Expo actuelle.
+
+NE FORCE PAS simplement les numéros de versions dans package.json si cela crée des incompatibilités.
+
+Après la migration :
+
+lance les vérifications Expo
+vérifie les dépendances
+corrige les erreurs TypeScript/JavaScript
+corrige les imports obsolètes
+vérifie la navigation
+vérifie les permissions
+vérifie Android
+démarre l’application
+vérifie qu’elle peut réellement être exécutée.
+3. NE PAS CONFONDRE EXPO GO ET VERSION DE L’APPLICATION
+
+L’objectif n’est pas de modifier inutilement l’interface de l’application pour « ressembler au nouvel Expo Go ».
+
+L’objectif est de rendre mon projet compatible avec l’environnement Expo actuel.
+
+Conserve l’identité visuelle, la navigation et les fonctionnalités déjà présentes lorsque celles-ci sont bonnes.
+
+Ne fais pas une refonte totale sans raison.
+
+4. MIGRATION DES APIS OBSOLÈTES
+
+Recherche notamment les anciennes APIs utilisées pour :
+
+audio
+vidéo
+fichiers
+stockage
+permissions
+notifications
+médias.
+
+Si le projet utilise une ancienne solution Expo pour la lecture multimédia, migre vers les APIs Expo actuellement recommandées.
+
+Pour l’audio, privilégie l’architecture Expo actuelle et vérifie notamment expo-audio.
+
+Pour la vidéo, vérifie l’utilisation de l’API Expo vidéo actuelle, et ne garde pas une ancienne API uniquement parce qu’elle fonctionne partiellement.
+
+Chaque migration doit être testée après modification.
+
+5. LECTEUR AUDIO COMPLET
+
+Le projet doit devenir un véritable lecteur de musique Android local.
+
+L’application doit pouvoir :
+
+lire les fichiers audio présents sur l’appareil
+mettre en pause
+reprendre
+arrêter
+passer au morceau suivant
+revenir au précédent
+avancer/reculer
+afficher la progression
+afficher la durée
+gérer la file de lecture
+lecture aléatoire
+répétition
+favoris
+historique des morceaux
+reprise de lecture lorsque cela est pertinent
+gérer correctement les erreurs de fichier
+gérer les changements de piste
+éviter les démarrages multiples
+éviter les fuites mémoire
+éviter les players concurrents.
+6. IMPORTATION MANUELLE DES SONS
+
+AJOUTE une véritable fonction « Importer des sons ».
+
+L’utilisateur doit pouvoir ouvrir le sélecteur de fichiers Android et sélectionner des fichiers audio présents dans son téléphone.
+
+Prévoir notamment les formats audio courants compatibles Android.
+
+Le flux doit être :
+
+Bibliothèque → Importer → Sélection des fichiers → analyse des métadonnées → ajout à la bibliothèque → possibilité immédiate de lecture.
+
+Prévoir :
+
+sélection multiple lorsque possible
+annulation propre
+fichier invalide
+fichier non supporté
+doublon
+fichier supprimé après import
+fichier déplacé
+affichage de la progression lorsqu’un traitement prend du temps.
+
+Utiliser les APIs Expo actuelles adaptées, notamment expo-document-picker et expo-file-system lorsqu’elles sont appropriées.
+
+Ne copie pas inutilement des fichiers volumineux dans plusieurs emplacements du téléphone.
+
+Privilégie une architecture efficace en stockage.
+
+7. SCAN AUTOMATIQUE DE LA MUSIQUE DU TÉLÉPHONE
+
+L’application doit également pouvoir détecter automatiquement les médias présents sur l’appareil.
+
+Au premier lancement :
+
+expliquer pourquoi les permissions sont nécessaires
+demander les autorisations appropriées
+scanner la bibliothèque média
+détecter les fichiers audio disponibles
+récupérer les métadonnées lorsque disponibles
+créer/mettre à jour la bibliothèque locale.
+
+Prévoir ensuite un scan manuel :
+
+« Scanner maintenant »
+
+et un mécanisme de synchronisation intelligent afin de ne pas rescanner inutilement plusieurs milliers de fichiers.
+
+Détecter :
+
+nouveaux fichiers
+fichiers supprimés
+fichiers modifiés
+doublons.
+
+NE FAIS PAS un scan complet lourd à chaque ouverture de l’application.
+
+8. BIBLIOTHÈQUE MUSICALE
+
+La bibliothèque doit être correctement organisée.
+
+Prévoir une architecture permettant au minimum :
+
+Toutes les musiques
+Albums
+Artistes
+Genres lorsque les métadonnées existent
+Dossiers
+Favoris
+Récemment ajoutées
+Récemment jouées
+Playlists.
+
+Prévoir recherche efficace.
+
+Pour les grandes bibliothèques, privilégier :
+
+indexation
+pagination
+traitement asynchrone
+listes virtualisées
+cache
+mises à jour incrémentales.
+
+NE CHARGE PAS plusieurs milliers de morceaux simultanément dans la mémoire de l’interface.
+
+9. VIDÉOS
+
+Les vidéos doivent réellement fonctionner.
+
+Teste :
+
+ouverture d’une vidéo
+lecture
+pause
+reprise
+progression
+plein écran
+rotation lorsque compatible
+volume
+changement de position
+retour arrière
+fermeture du lecteur
+passage d’une vidéo à une autre.
+
+Corrige tous les bugs actuels liés à la vidéo.
+
+L’interface vidéo doit rester propre et immersive.
+
+Ne place pas trop de boutons directement par-dessus la vidéo.
+
+Les contrôles doivent être accessibles mais ne doivent pas gêner le visionnement.
+
+10. INTERFACE DU LECTEUR VIDÉO
+
+Étudie les conventions d’interface courantes des lecteurs multimédias Android modernes et implémente une disposition claire.
+
+Priorités :
+
+vidéo grande et lisible
+contrôles faciles à atteindre
+boutons bien espacés
+progression visible
+volume accessible
+plein écran accessible
+titre et informations discrètes
+disparition automatique des contrôles après quelques secondes
+réapparition au toucher
+support correct portrait/paysage lorsque possible.
+
+NE SURCHARGE PAS l'écran.
+
+11. LECTURE EN ARRIÈRE-PLAN
+
+Pour l’audio :
+
+lecture lorsque l’application passe en arrière-plan
+lecture lorsque l’écran est verrouillé
+contrôles depuis la notification
+contrôles depuis l’écran verrouillé lorsque supportés
+pause/play
+piste précédente/suivante
+titre du morceau
+artiste
+pochette.
+
+Configure correctement le service média Android et les permissions nécessaires selon l’architecture Expo actuelle.
+
+Teste également :
+
+verrouillage de l’écran
+ouverture d’une autre application
+retour dans l’application
+appel ou interruption audio
+branchement/débranchement d’écouteurs lorsque pertinent
+perte temporaire du focus audio.
+
+La lecture audio ne doit pas s’arrêter de manière imprévisible.
+
+12. NOTIFICATIONS
+
+Implémente la gestion appropriée des notifications.
+
+Le lecteur doit notamment pouvoir fournir les contrôles multimédias Android via le mécanisme prévu par la solution audio utilisée.
+
+Ne transforme pas chaque action de lecture en notification inutile.
+
+Les notifications classiques de l’application doivent rester limitées aux événements pertinents.
+
+13. PERMISSIONS ANDROID
+
+Audit complet des permissions.
+
+Demande uniquement les permissions nécessaires.
+
+Explique-les clairement à l’utilisateur.
+
+Vérifie les différences entre versions Android récentes et anciennes, notamment pour l’accès aux médias et aux notifications.
+
+Gestion correcte de :
+
+permission accordée
+refus
+refus définitif
+permission limitée lorsqu’applicable
+retour dans l’application après modification dans les paramètres Android.
+
+L’application ne doit pas planter lorsqu’une permission est refusée.
+
+14. ÉGALISEUR ET AUDIO
+
+Améliore la partie audio.
+
+Le projet doit prévoir une architecture permettant un véritable égaliseur Android lorsque l’environnement natif le permet.
+
+Je veux pouvoir avoir des réglages tels que :
+
+égaliseur
+basses
+aigus
+balance lorsque pertinent
+presets
+normalisation ou amélioration appropriée lorsque techniquement possible.
+
+IMPORTANT :
+
+Ne simule pas un égaliseur avec uniquement des boutons d’interface.
+
+Si une fonction exige un module natif Android qui n’est pas disponible dans Expo Go, indique-le clairement et mets en place l’architecture correcte pour un development build.
+
+Ne prétends pas qu’une fonction native fonctionne dans Expo Go si ce n’est pas le cas.
+
+15. PERFORMANCE
+
+Optimise l’application sans détruire son design.
+
+Analyse :
+
+re-renders inutiles
+images trop lourdes
+listes trop lentes
+opérations synchrones
+scans trop fréquents
+stockage inefficace
+listeners non supprimés
+players non libérés
+mémoire
+démarrage
+consommation CPU
+batterie.
+
+Utilise notamment :
+
+memoization lorsque réellement utile
+virtualisation des listes
+lazy loading
+cache
+traitement en arrière-plan lorsque approprié
+scans incrémentaux
+nettoyage des ressources.
+
+Ne fais pas d’optimisations artificielles qui rendent le code plus complexe sans bénéfice réel.
+
+16. STOCKAGE LOCAL
+
+Analyse le système de stockage actuel.
+
+Si nécessaire, améliore l’architecture pour stocker efficacement :
+
+morceaux
+métadonnées
+albums
+artistes
+favoris
+playlists
+historique
+paramètres
+progression de lecture
+préférences.
+
+Privilégie une base locale structurée lorsque le volume de données le justifie.
+
+L’application doit rester utilisable sans connexion Internet pour tout ce qui concerne les fichiers locaux.
+
+17. DESIGN ET RESPONSIVE
+
+Conserve le design existant lorsqu’il est cohérent, mais corrige les problèmes d’interface.
+
+Vérifie :
+
+petits téléphones
+grands téléphones
+portrait
+paysage
+différentes densités d’écran
+tailles de texte
+espaces
+débordements
+boutons trop gros
+éléments qui se chevauchent
+barres de navigation
+lecteur plein écran.
+
+L’interface doit être respirante, moderne et cohérente.
+
+Ne transforme pas tout en énormes cartes ou boutons.
+
+18. NAVIGATION
+
+Conserve la structure existante lorsque celle-ci est bonne.
+
+Vérifie notamment les écrans :
+
+Accueil
+Bibliothèque
+Recherche
+Profil
+Lecteur audio
+Lecteur vidéo
+Paramètres
+Playlists
+Albums
+Artistes
+Dossiers.
+
+Assure-toi que chaque bouton conduit réellement au bon écran.
+
+Supprime les dead ends et boutons qui ne font rien.
+
+19. PARAMÈTRES
+
+Améliore les paramètres afin qu’ils soient structurés.
+
+Prévoir notamment selon ce qui est pertinent :
+
+qualité et comportement de lecture
+lecture automatique
+lecture en arrière-plan
+égaliseur
+thème
+apparence
+notifications
+scan de bibliothèque
+importation
+stockage
+comportement vidéo
+informations sur l’application.
+
+N’ajoute pas des paramètres inutiles simplement pour remplir l’écran.
+
+20. ARTWORK ET MÉTADONNÉES
+
+Lorsque les métadonnées sont disponibles :
+
+récupérer titre
+artiste
+album
+genre
+durée
+artwork/pochette lorsque disponible.
+
+Prévoir une image par défaut élégante lorsque l’artwork n’existe pas.
+
+Le système doit éviter de recharger sans arrêt les mêmes images.
+
+21. GESTION DES ERREURS
+
+Aucun écran critique ne doit planter silencieusement.
+
+Ajoute une gestion propre des erreurs pour :
+
+fichier corrompu
+format non supporté
+permission refusée
+fichier introuvable
+bibliothèque vide
+problème de lecture
+player indisponible
+erreur de stockage
+erreur de navigation
+problème pendant un scan.
+
+Les messages d’erreur doivent être compréhensibles pour l’utilisateur.
+
+22. TESTS OBLIGATOIRES
+
+Après chaque gros changement :
+
+vérifier TypeScript
+vérifier le lint si configuré
+lancer les vérifications Expo
+lancer l’application
+tester les écrans principaux
+tester audio
+tester vidéo
+tester import
+tester scan
+tester navigation
+tester paramètres.
+
+Ne considère JAMAIS une fonctionnalité comme terminée simplement parce que le code compile.
+
+Une tâche est « terminée » uniquement si elle a été testée ou vérifiée de manière raisonnable.
+
+23. NE PAS CASSER L’EXISTANT
+
+Avant toute modification importante :
+
+comprendre le code existant
+identifier les dépendances entre composants
+modifier progressivement
+préserver les fonctionnalités fonctionnelles.
+
+NE SUPPRIME PAS une fonctionnalité existante sans justification.
+
+NE REMPLACE PAS toute l’application par une nouvelle application.
+
+NE change PAS complètement le design simplement parce que tu peux le faire.
+
+24. ORDRE D’EXÉCUTION
+
+Travaille dans cet ordre :
+
+PHASE 1 — Audit complet
+
+PHASE 2 — Inventaire des tâches historiques et fonctionnalités inachevées
+
+PHASE 3 — Correction du problème Expo / migration vers la version stable compatible actuelle
+
+PHASE 4 — Correction des erreurs introduites par la migration
+
+PHASE 5 — Réparation audio et vidéo
+
+PHASE 6 — Importation des fichiers audio
+
+PHASE 7 — Scan automatique de la bibliothèque Android
+
+PHASE 8 — Notifications et lecture en arrière-plan
+
+PHASE 9 — Égaliseur et fonctionnalités audio avancées selon les possibilités natives
+
+PHASE 10 — Bibliothèque, playlists, favoris, historique, recherche et métadonnées
+
+PHASE 11 — Paramètres
+
+PHASE 12 — UX/UI et responsive
+
+PHASE 13 — Performance et consommation mémoire/batterie
+
+PHASE 14 — Tests complets
+
+PHASE 15 — Audit final des bugs et fonctionnalités manquantes
+
+25. DEVELOPMENT BUILD VS EXPO GO
+
+C’est très important.
+
+Détermine précisément quelles fonctionnalités fonctionnent dans Expo Go et quelles fonctionnalités nécessitent un development build.
+
+Ne force pas l’application à rester limitée à Expo Go si une fonctionnalité native importante l’exige.
+
+Pour les fonctionnalités natives avancées, prépare correctement le projet pour un development build Expo/EAS.
+
+L’objectif final est une véritable application Android fonctionnelle, pas uniquement une démo Expo.
+
+26. RAPPORT APRÈS CHAQUE GRANDE PHASE
+
+Après chaque phase, indique :
+
+ce que tu as trouvé
+ce que tu as modifié
+les fichiers importants modifiés
+les problèmes résolus
+les problèmes restant à résoudre
+les fonctionnalités vérifiées
+les fonctionnalités non vérifiables et pourquoi.
+
+NE DIS JAMAIS « tout est terminé » sans vérification.
+
+27. AUDIT FINAL OBLIGATOIRE
+
+À la fin, fais un dernier audit indépendant.
+
+Cherche volontairement :
+
+bugs
+crashs possibles
+boutons inutiles
+écrans incomplets
+fonctionnalités promises mais absentes
+API deprecated
+dépendances incompatibles
+problèmes de permissions
+problèmes Android
+problèmes Expo
+problèmes audio
+problèmes vidéo
+problèmes de mémoire
+problèmes de performance
+problèmes de navigation
+problèmes responsive.
+
+Ensuite corrige les problèmes trouvés.
+
+28. CRITÈRE DE RÉUSSITE
+
+À la fin, je veux une application de lecteur multimédia Android réellement exploitable avec :
+
+compatibilité Expo actuelle
+démarrage fonctionnel
+audio fonctionnel
+vidéo fonctionnelle
+importation manuelle des sons
+scan automatique de la bibliothèque
+bibliothèque musicale organisée
+recherche
+albums
+artistes
+dossiers
+playlists
+favoris
+historique
+notifications média
+lecture audio en arrière-plan
+contrôle depuis l’écran verrouillé lorsque supporté
+permissions correctement gérées
+paramètres complets
+interface responsive
+bonnes performances
+consommation de ressources raisonnable
+gestion correcte des erreurs
+architecture propre et maintenable.
+
+IMPORTANT FINAL :
+
+Ne te contente pas de corriger le problème qui empêche actuellement Expo Go de démarrer.
+
+Tu dois traiter le projet comme une application existante à reprendre et terminer.
+
+Première action : AUDITE LE PROJET AVANT DE CODER.
+
+Ensuite établis le backlog des tâches terminées, partiellement terminées, abandonnées et manquantes.
+
+Puis commence les corrections dans l’ordre des phases ci-dessus.
+
+Ne fais pas de reconstruction complète inutile.
+
+Ne supprime pas les bonnes fonctionnalités existantes.
+
+Ne prétends pas avoir testé quelque chose que tu n’as pas réellement testé.
+
+Utilise la documentation officielle Expo actuelle comme référence pour les versions et APIs modernes.

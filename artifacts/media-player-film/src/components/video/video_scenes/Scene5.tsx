@@ -11,17 +11,17 @@ export function Scene5() {
   const [handoff, setHandoff] = useState(false);
 
   useSceneTimer([
-    { time: 1180, callback: () => setShowDetail(true) },
-    { time: 1900, callback: () => setShowBrand(true) },
-    { time: 2360, callback: () => setShowCategory(true) },
+    { time: 1980, callback: () => setShowDetail(true) },
+    { time: 2720, callback: () => setShowBrand(true) },
+    { time: 3080, callback: () => setShowCategory(true) },
     { time: 4000, callback: () => setHandoff(true) },
   ]);
 
   return (
     <motion.section
       className="film-scene"
-      initial={{ opacity: 0, backgroundColor: '#ff8066', clipPath: 'inset(0 0 0 50%)' }}
-      animate={{ opacity: 1, backgroundColor: '#090b18', clipPath: 'inset(0 0 0 0%)' }}
+      initial={{ opacity: 1, backgroundColor: '#090b18', clipPath: 'inset(0)' }}
+      animate={{ opacity: 1, backgroundColor: '#090b18', clipPath: 'inset(0)' }}
       exit={{ opacity: 0, scale: 1.04, clipPath: 'circle(0% at 50% 50%)' }}
       transition={{ duration: 0.52, ease: EASE_OUT }}
     >
@@ -45,18 +45,18 @@ export function Scene5() {
         aria-hidden="true"
         style={{
           position: 'absolute',
-          inset: 0,
-          display: 'grid',
-          placeItems: 'center',
+          left: '58%',
+          top: '50%',
+          translate: '-50% -50%',
           zIndex: 1,
         }}
         initial={{ scale: 1.65, opacity: 0 }}
         animate={handoff
-          ? { scale: 0.42, rotate: 0, opacity: 1, x: 0, y: 0 }
-          : { scale: 1, rotate: -9, opacity: 0.27, x: '1vw', y: '-1vh' }}
+          ? { scale: 0.6875, rotate: 0, opacity: 1, x: 0, y: 0 }
+          : { scale: 1, rotate: -9, opacity: 0.27, x: 0, y: 0 }}
         transition={{ duration: handoff ? 0.78 : 0.6, ease: EASE_OUT }}
       >
-        <AccentRing size="32vw" color="#f7f8ff" width="0.15vw" />
+        <AccentRing size="32vw" color="var(--color-primary)" width="0.15vw" animated={false} />
       </motion.div>
 
       <motion.div
@@ -85,7 +85,7 @@ export function Scene5() {
           initial={{ opacity: 0, y: 12, clipPath: 'inset(100% 0 0 0)' }}
           animate={showDetail ? { opacity: 1, y: 0, clipPath: 'inset(0% 0 0 0)' } : {}}
           transition={{ duration: 0.4, ease: EASE_OUT }}
-          style={{ marginTop: '2.5vh', color: 'rgba(247,248,255,.73)', fontSize: '2.55vmin' }}
+          style={{ marginTop: '2.5vh', color: 'rgba(247,248,255,.73)', fontSize: '3vmin' }}
         >
           Aucun envoi automatique dans le cloud.
         </motion.div>

@@ -17,8 +17,8 @@ export function Scene1() {
   return (
     <motion.section
       className="film-scene"
-      initial={{ opacity: 0, clipPath: 'inset(0 0 0 100%)' }}
-      animate={{ opacity: 1, clipPath: 'inset(0 0 0 0%)' }}
+      initial={{ opacity: 1, clipPath: 'inset(0)' }}
+      animate={{ opacity: 1, clipPath: 'inset(0)' }}
       exit={{ opacity: 0, scale: 1.06, rotateY: -8, clipPath: 'inset(0 0 0 100%)' }}
       transition={{ duration: 0.42, ease: EASE_OUT }}
       style={{ perspective: 1200, background: '#090b18' }}
@@ -30,13 +30,12 @@ export function Scene1() {
           position: 'absolute',
           left: '58%',
           top: '50%',
-          translateX: '-50%',
-          translateY: '-50%',
+          translate: '-50% -50%',
         }}
         animate={handoff ? { scale: 3.35, x: '16vw', opacity: 0 } : { scale: 1, rotate: [0, -3, 0] }}
         transition={handoff ? { duration: 0.72, ease: EASE_OUT } : { duration: 4.2, ease: 'easeInOut' }}
       >
-        <AccentRing size="22vw" />
+        <AccentRing size="22vw" animated={false} />
       </motion.div>
 
       <motion.div

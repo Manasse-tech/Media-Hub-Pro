@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { AudioLines, Film, Heart, Library } from 'lucide-react';
+import { Info, Library, Heart } from 'lucide-react';
 import { useSceneTimer } from '@/lib/video';
 import { AccentRing, assetUrl, EASE_OUT, SceneGrain, SceneWord } from '../FilmElements';
 
@@ -16,13 +16,13 @@ export function Scene3() {
     { time: 1500, callback: () => setFilter(1) },
     { time: 2100, callback: () => setFilter(2) },
     { time: 2670, callback: () => setFilter(3) },
-    { time: 3710, callback: () => setHandoff(true) },
+    { time: 3950, callback: () => setHandoff(true) },
   ]);
 
   return (
     <motion.section
       className="film-scene"
-      initial={{ opacity: 0, clipPath: 'inset(0 0 100% 0)', rotateX: 5 }}
+      initial={{ opacity: 1, clipPath: 'inset(0 5% 0 5%)', rotateX: 5 }}
       animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0)', rotateX: 0 }}
       exit={{ opacity: 0, scale: 1.07, rotateY: 8, clipPath: 'polygon(0 0, 48% 0, 48% 100%, 0 100%)' }}
       transition={{ duration: 0.44, ease: EASE_OUT }}
@@ -49,7 +49,7 @@ export function Scene3() {
             exit={{ opacity: 0, y: -18, filter: 'blur(5px)' }}
             transition={{ duration: 0.34, ease: EASE_OUT }}
           >
-            <SceneWord size={headline === 0 ? '15vmin' : '11vmin'}>
+            <SceneWord size={headline === 0 ? '18vmin' : '11.5vmin'}>
               {headline === 0 ? 'TRIEZ.' : 'RETROUVEZ.'}
             </SceneWord>
           </motion.div>
@@ -57,7 +57,7 @@ export function Scene3() {
         <motion.div
           initial={{ opacity: 0, clipPath: 'inset(0 100% 0 0)' }}
           animate={{ opacity: 1, clipPath: 'inset(0 0 0 0)' }}
-          transition={{ delay: 2.56, duration: 0.52, ease: EASE_OUT }}
+          transition={{ delay: 2.66, duration: 0.52, ease: EASE_OUT }}
           style={{ marginTop: '4.6vh', maxWidth: '28vw', color: 'var(--color-text-secondary)', fontSize: '3vmin', lineHeight: 1.25 }}
         >
           UNE BIBLIOTHÈQUE POUR VOS MÉDIAS
@@ -86,7 +86,7 @@ export function Scene3() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.7vw', marginBottom: '2.2vh' }}>
           <Library size="2.1vmin" color="var(--color-primary)" strokeWidth={1.7} />
           <span className="film-mono" style={{ fontSize: '1.55vmin', color: 'var(--color-text-secondary)' }}>BIBLIOTHÈQUE</span>
-          <span className="film-mono" style={{ marginLeft: 'auto', fontSize: '1.3vmin', color: 'var(--color-text-muted)' }}>01 / 04</span>
+          <span className="film-mono" style={{ marginLeft: 'auto', fontSize: '1.3vmin', color: 'var(--color-text-muted)' }}>AUDIO / VIDÉO</span>
         </div>
 
         <div style={{ display: 'flex', gap: '0.55vw', marginBottom: '2.15vh' }}>
@@ -122,9 +122,8 @@ export function Scene3() {
           transition={{ duration: handoff ? 0.84 : 0.45, ease: EASE_OUT }}
           style={{ display: 'grid', gap: '1vh', transformOrigin: '50% 50%' }}
         >
-          <MediaRow image="images/album-neon.jpg" icon={<AudioLines size="2vmin" />} title="Piste audio" detail="Audio" tint="cyan" delay={0.32} />
-          <MediaRow image="images/film-desert.jpg" icon={<Film size="2vmin" />} title="Fichier vidéo" detail="Vidéo" tint="orange" delay={0.52} />
-          <MediaRow icon={<Heart size="2vmin" />} title="Vos favoris" detail="À retrouver" tint="cyan" delay={0.72} />
+          <MediaRow image="images/album-neon.jpg" title="Piste audio" detail="Audio" tint="cyan" delay={0.32} />
+          <MediaRow image="images/film-desert.jpg" title="Fichier vidéo" detail="Vidéo" tint="orange" delay={0.52} />
         </motion.div>
 
         <motion.div
@@ -141,14 +140,12 @@ export function Scene3() {
 
 function MediaRow({
   image,
-  icon,
   title,
   detail,
   tint,
   delay,
 }: {
   image?: string;
-  icon: React.ReactNode;
   title: string;
   detail: string;
   tint: 'cyan' | 'orange';
@@ -173,13 +170,16 @@ function MediaRow({
       }}
     >
       <div style={{ width: '8.7vh', height: '8.7vh', flex: '0 0 auto', overflow: 'hidden', borderRadius: '0.8vw', display: 'grid', placeItems: 'center', background: 'rgba(97,231,232,.1)', color: accent }}>
-        {image ? <img className="film-image" src={assetUrl(image)} alt="" /> : icon}
+        <img className="film-image" src={assetUrl(image!)} alt="" />
       </div>
       <div style={{ minWidth: 0 }}>
         <div style={{ color: 'var(--color-text-primary)', fontSize: '2.2vmin', fontWeight: 600, lineHeight: 1.2 }}>{title}</div>
         <div className="film-mono" style={{ marginTop: '0.8vh', color: 'var(--color-text-muted)', fontSize: '1.25vmin' }}>{detail.toUpperCase()}</div>
       </div>
-      <div style={{ marginLeft: 'auto', color: 'var(--color-text-muted)', fontSize: '2vmin', padding: '0 0.55vw' }}>···</div>
+      <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '1vw', padding: '0 0.55vw', color: 'var(--color-text-muted)' }}>
+        <Heart size="2.1vmin" strokeWidth={1.65} />
+        <Info size="2.1vmin" strokeWidth={1.65} />
+      </div>
     </motion.div>
   );
 }
